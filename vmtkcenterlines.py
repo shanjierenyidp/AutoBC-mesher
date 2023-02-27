@@ -475,7 +475,6 @@ class vmtkCenterlines(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['SeedSelectorName','seedselector','str',1,'["pickpoint","openprofiles","carotidprofiles","profileidlist","idlist","pointlist"]','seed point selection method (pickpoint: interactive; openprofiles: choose among barycenters of open profiles of the surface; carotidprofiles: open profiles are automatically selected based on their z-axis coordinate (lower to higher: CCA, ECA, ICA)); profileidlist: list of open profile ids (specified as argument to -sourceids and -targetids); idlist: list of surface point ids (specified as argument to -sourceids and -targetids); pointlist: list of surface points (specified as argument to -sourcepoints and -targetpoints)'],
-            ['SourceIds','sourceids','int',-1,'','list of source point ids'],
             ['TargetIds','targetids','int',-1,'','list of target point ids'],
             ['SourcePoints','sourcepoints','float',-1,'','list of source point coordinates'],
             ['TargetPoints','targetpoints','float',-1,'','list of target point coordinates'],
