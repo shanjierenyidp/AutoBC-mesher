@@ -17,15 +17,15 @@ import argparse
 parser = argparse.ArgumentParser(description = ' Generate 2d unstructured mesh with boundary condition (BC) given geometry information and BC information.')
 parser.add_argument('-ifile', '--inputfile', type = str, required = True, help = 'The input file name')
 parser.add_argument('-ofile', '--outputfile', type = str, required = True, default = 'mesh', help = 'The output file name')
-parser.add_argument('-f', '--format', type = str, required = True, default = 'openfoam',  help = 'The format of the output file')
 parser.add_argument('-s', '--segment', type = np.ndarray, required = True, help = 'The ndarray of indices of the nodes in the mesh')
 parser.add_argument('-l', '--label', type = list, required = True, help = 'The label of every boundary')
 parser.add_argument('-r', '--resolution', type = np.ndarray, required = True, help = 'The resolution on every boundary')
-parser.add_argument('-odir', '--output_dir', type = str, required = False, help = 'The output directory', default = './')
 parser.add_argument('-ma', '--max_area', type = float, required = False, help = 'The maximum area of mesh cells', default = 4e-4)
 parser.add_argument('-sp', '--split_boundary', type = bool, required = False, default = True, help = 'Whether to split the boundary')
 parser.add_argument('-cd', '--conforming_delaunay', type = bool, required = False, default = False, help = '')
 parser.add_argument('-pt', '--patch_type', type = list, required = False, default = None, help = 'patch type of the foam file')
+parser.add_argument('-sc', '--scale', type = int, required = False, default = 1, help = 'The scale of the output file')
+
 
 args = parser.parse_args()
 
@@ -642,8 +642,10 @@ class mesher_2d:
 
 if __name__ == '__main__':
     box = np.load(args.input_file)[:,:2]
-    my_mesh = mesher_2d(box, args.segments, args.label, args.resolution, )
-    my_mesh.meshing(max_area = args.max_area ,conforming_delaunay= args.conforming_delaunay, split_boundary = args.split_boundary)
-    my_mesh.writing('aorta{:d}'.format(args.max_area), args.format ,output_dir = args.output_dir)
+    (dir, fullname) = os.path.split(args.outputfilename)
+    (name, format) = os.path.splittext(fullname)
+    my_mesh = mesher_2d(box, np.array(args.segment), args.label, np.array(args.resolution))
+    my_mesh.meshing(max_area = args.max_area  ,conforming_delaunay= args.conforming_delaunay ,split_boundary = args.split_boundary)
+    my_mesh.writing('aorta{:d}'.format(args.max_area) ,format ,output_dir = dir)
     
 # my_mesh = mesher_2d(box, np.array([1,10,109,118]), ['inlet','topWall','outlet','bottomWall'], np.array([10,30,10,30])) # 10,30,10,30
