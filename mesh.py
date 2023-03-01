@@ -23,7 +23,7 @@ parser.add_argument('-r', '--resolution', type = int, nargs = '+', required = Tr
 parser.add_argument('-ma', '--max_area', type = float, required = False, help = 'The maximum area of mesh cells', default = 4e-4)
 parser.add_argument('-sp', '--split_boundary', type = bool, required = False, default = True, help = 'Whether to split the boundary')
 parser.add_argument('-cd', '--conforming_delaunay', type = bool, required = False, default = False, help = '')
-parser.add_argument('-pt', '--patch_type', type = list, required = False, default = None, help = 'patch type of the foam file')
+parser.add_argument('-pt', '--patch_type', type = str, nargs = '+', required = False, default = None, help = 'patch type of the foam file')
 parser.add_argument('-sc', '--scale', type = int, required = False, default = 1, help = 'The scale of the output file')
 
 
@@ -599,7 +599,7 @@ class mesher_2d:
 
     def writing(self,file_name,format,output_dir = './', version = 42, scale=1, patch_type = None, flip = False):
         print('start writing')
-        if format =='openfoam':
+        if format =='':
             if scale!= 1:
                 print('scaling')
 
@@ -608,6 +608,7 @@ class mesher_2d:
                 patch_type = ['patch']*len(self.mesh_3d_bc_labels)  
     
             print('debug1')
+            self.extrude()
             vtktofoam(self.mesh_vtk,self.mesh_vtp, output_dir, patch_name = self.mesh_3d_bc_labels,patch_type = patch_type, scale = scale)
         elif format =='.stl':
             if scale!= 1:
@@ -647,5 +648,5 @@ if __name__ == '__main__':
     (name, format) = os.path.splittext(fullname)
     my_mesh = mesher_2d(box, np.array(args.segment), args.label, np.array(args.resolution))
     my_mesh.meshing(max_area = args.max_area  ,conforming_delaunay= args.conforming_delaunay ,split_boundary = args.split_boundary)
-    my_mesh.writing(file_name = name ,format=format,output_dir = dir)
+    my_mesh.writing(file_name = name ,format=format,output_dir = dir, patch_type=args.patch_type)
     
