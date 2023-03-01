@@ -17,9 +17,9 @@ import argparse
 parser = argparse.ArgumentParser(description = ' Generate 2d unstructured mesh with boundary condition (BC) given geometry information and BC information.')
 parser.add_argument('-ifile', '--inputfile', type = str, required = True, help = 'The input file name')
 parser.add_argument('-ofile', '--outputfile', type = str, required = True, default = 'mesh', help = 'The output file name')
-parser.add_argument('-s', '--segment', type = np.ndarray, required = True, help = 'The ndarray of indices of the nodes in the mesh')
-parser.add_argument('-l', '--label', type = list, required = True, help = 'The label of every boundary')
-parser.add_argument('-r', '--resolution', type = np.ndarray, required = True, help = 'The resolution on every boundary')
+parser.add_argument('-s', '--segment', type = int, nargs = '+', required = True, help = 'The ndarray of indices of the nodes in the mesh')
+parser.add_argument('-l', '--label', type = str, nargs = '+', required = True, help = 'The label of every boundary')
+parser.add_argument('-r', '--resolution', type = int, nargs = '+', required = True, help = 'The resolution on every boundary')
 parser.add_argument('-ma', '--max_area', type = float, required = False, help = 'The maximum area of mesh cells', default = 4e-4)
 parser.add_argument('-sp', '--split_boundary', type = bool, required = False, default = True, help = 'Whether to split the boundary')
 parser.add_argument('-cd', '--conforming_delaunay', type = bool, required = False, default = False, help = '')
@@ -609,7 +609,7 @@ class mesher_2d:
     
             print('debug1')
             vtktofoam(self.mesh_vtk,self.mesh_vtp, output_dir, patch_name = self.mesh_3d_bc_labels,patch_type = patch_type, scale = scale)
-        elif format =='stl':
+        elif format =='.stl':
             if scale!= 1:
                 print('scaling')
                 mesh_copy = self.mesh.copy
@@ -617,10 +617,10 @@ class mesher_2d:
                 mesh_copy.vertices *= scale
             
             pymesh.save_mesh(output_dir+file_name+'.stl',self.mesh)
-        elif format =='su2':
+        elif format =='.su2':
             vtktosu2(self.sum_2d_long, file_name=file_name,  output_dir =output_dir, scale=scale, flip = flip)
             
-        elif format =='vtk':
+        elif format =='.vtk':
             if scale!=1: 
                 print('scale not available currently ')
             # volume mesh
@@ -629,7 +629,7 @@ class mesher_2d:
             vtkwriter.SetInputData(self.mesh_vtk)
             vtkwriter.SetFileVersion(version)
             vtkwriter.Update()
-        elif format =='vtp':
+        elif format =='.vtp':
             if scale!=1: 
                 print('scale not available currently ')
             #surface mesh
@@ -641,11 +641,11 @@ class mesher_2d:
 
 
 if __name__ == '__main__':
-    box = np.load(args.input_file)[:,:2]
-    (dir, fullname) = os.path.split(args.outputfilename)
+    box = np.load(args.inputfile)[:,:2]
+    (dir, fullname) = os.path.split(args.outputfile)
+    dir += '/'
     (name, format) = os.path.splittext(fullname)
     my_mesh = mesher_2d(box, np.array(args.segment), args.label, np.array(args.resolution))
     my_mesh.meshing(max_area = args.max_area  ,conforming_delaunay= args.conforming_delaunay ,split_boundary = args.split_boundary)
-    my_mesh.writing('aorta{:d}'.format(args.max_area) ,format ,output_dir = dir)
+    my_mesh.writing(file_name = name ,format=format,output_dir = dir)
     
-# my_mesh = mesher_2d(box, np.array([1,10,109,118]), ['inlet','topWall','outlet','bottomWall'], np.array([10,30,10,30])) # 10,30,10,30
