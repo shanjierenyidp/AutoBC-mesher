@@ -704,7 +704,7 @@ def write_inlet_file(sum1, profile=None,output_dir = './',scale=1, file_name='in
 
 
 if __name__ == '__main__':
-    box = np.load(args.inputfile)[:,:2]
+    box = np.load(args.inputfile)
     (dir, fullname) = os.path.split(args.outputfile)
     dir += '/'
     (name, format) = os.path.splittext(fullname)
