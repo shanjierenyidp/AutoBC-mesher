@@ -93,10 +93,15 @@ This arguments specifies the number of inner loops in the geometry. The default 
 
 After specifying the number of loops, the user will be required to give the parameters neccessary to specify each inner loop, for example:
 
-` Please enter the points of loop, seperated by space./airfoil/airfoil.npz
-Please enter the segments of loop, seperated by space1seperated by spaceairfoilPlease enter the labels of loop，
+` Please enter the points of loop, seperated by space./airfoil/airfoil.npz` 
+
+`
+Please enter the segments of loop, seperated by space1`
+
+`Please enter the labels of loop, seperated by spaceairfoil`
+
+`
 Please enter the resolutions of loop, seperated by space200`
 
 #### Seed
 
-#### 
