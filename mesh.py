@@ -13,6 +13,7 @@ import meshio
 import argparse
 
 
+
 # Defining the parser
 parser = argparse.ArgumentParser(description = ' Generate 2d unstructured mesh with boundary condition (BC) given geometry information and BC information.')
 parser.add_argument('-ifile', '--inputfile', type = str, required = True, help = 'The input file name')
@@ -25,8 +26,8 @@ parser.add_argument('-sp', '--split_boundary', type = bool, required = False, de
 parser.add_argument('-cd', '--conforming_delaunay', type = bool, required = False, default = False, help = '')
 parser.add_argument('-pt', '--patch_type', type = str, nargs = '+', required = False, default = None, help = 'patch type of the foam file')
 parser.add_argument('-sc', '--scale', type = int, required = False, default = 1, help = 'The scale of the output file')
-
-
+parser.add_argument('-nl', '--number_of_inner_loops', type = int, required =False, default = 0, help  = 'Number of inner loops')
+parser.add_argument('-se', '--seeds', type = int, required = False, default = 0, help = 'The seed of the polyMesh file')
 args = parser.parse_args()
 
 
@@ -600,6 +601,7 @@ class mesher_2d:
     def writing(self,file_name,format,output_dir = './', version = 42, scale=1, patch_type = None, flip = False):
         print('start writing')
         if format =='':
+            self.extrude()
             if scale!= 1:
                 print('scaling')
 
@@ -607,8 +609,7 @@ class mesher_2d:
                 print("no patch type found, setting all patches to 'patch' ")
                 patch_type = ['patch']*len(self.mesh_3d_bc_labels)  
     
-            print('debug1')
-            self.extrude()
+            # print('debug1')
             vtktofoam(self.mesh_vtk,self.mesh_vtp, output_dir, patch_name = self.mesh_3d_bc_labels,patch_type = patch_type, scale = scale)
         elif format =='.stl':
             if scale!= 1:
@@ -639,6 +640,67 @@ class mesher_2d:
             vtpwriter.SetInputData(self.mesh_vtp)
             vtpwriter.Update()
 
+def write_inlet_file(sum1, profile=None,output_dir = './',scale=1, file_name='inlet.dat'): 
+    #compute normal 
+    points = sum1[-1][3]*scale # please remember to scale
+    start_pts = points[sum1[1][3][0,0]]
+    end_pts = points[sum1[1][3][-1,-1]]
+    inlet = end_pts-start_pts  # clock wise 
+    mid_point = (start_pts+end_pts)/2 
+    normal =np.array([-inlet[1],inlet[0]])  # conterclockwise 90 from inlet vector
+    radius = np.linalg.norm(normal)/2
+    norm_normal = normal/(2*radius)
+    inlet_normal = inlet/(2*radius)
+    
+    ptsin = []
+    ptsdin =[]
+    ptsin.append(points[sum1[1][3][0,0]])
+    ptsdin.append(0)
+
+    for i in range(sum1[1][2]):
+        d = np.linalg.norm(points[sum1[1][3][i,1]]-start_pts)
+        ptsin.append(points[sum1[1][3][i,1]])
+        ptsdin.append(d)
+     
+    
+    xx = np.linspace(0,1,len(profile))
+    
+    # print(profile.shape)
+    if [profile] == None: 
+        Vm=1
+        parabolic = lambda x : -Vm/(radius**2)*(x-radius)**2+Vm 
+        yy_y = -parabolic(xx)
+        yy_x = -np.zeros(len(profile))
+    else: 
+        # print(profile[:,0])
+        yy_x = -np.interp(ptsdin/ptsdin[-1], xx, profile[:,0])
+        yy_y = -np.interp(ptsdin/ptsdin[-1], xx, profile[:,1])
+    
+    v_mag = []
+    v_vec = []
+    for i in range(sum1[1][2]+1):
+        # print(norm_normal.shape,inlet_normal.shape)
+        temp_v = yy_y[i]*norm_normal+yy_x[i]*inlet_normal
+        v_mag.append(np.linalg.norm(temp_v))
+        v_vec.append(temp_v/np.linalg.norm(temp_v))
+    v_mag= np.array(v_mag)
+    v_vec= np.array(v_vec)
+    
+    #writing inlet file
+    Mesh_File = open(os.path.join(output_dir, file_name),"w")
+
+    # Write the dimension of the problem and the number of interior elements
+    Mesh_File.write( "NMARK= %d\n" % (1) )
+    Mesh_File.write( "MARKER_TAG= %s\n" %(sum1[1][-2]))
+    Mesh_File.write( "NROW= %s\n" %(sum1[1][2]+1))
+    Mesh_File.write( "NCOL= %s\n" % (6))
+    for i in range(len(ptsin)):
+        Mesh_File.write( "%15.14f \t %15.14f \t %15.14f \t %15.14f \t %15.14f \t %15.14f\n"
+        % (ptsin[i][0],ptsin[i][1],1,v_mag[i],v_vec[i,0],v_vec[i,1]) )
+
+    # Close the mesh file and exit
+    Mesh_File.close()
+
 
 
 if __name__ == '__main__':
@@ -647,6 +709,16 @@ if __name__ == '__main__':
     dir += '/'
     (name, format) = os.path.splittext(fullname)
     my_mesh = mesher_2d(box, np.array(args.segment), args.label, np.array(args.resolution))
+    if args.number_of_inner_loops != 0 :
+        j = args.number_of_inner_loops
+        while j:
+            points = list(map(int, input('Please enter the points of loop %d , seperated by space', j).split()))
+            segments = list(map(int, input('Please enter the segments of loop %d , seperated by space', j).split()))
+            labels = input('Please enter the labels of loop %d , seperated by space', j).split()
+            resolutions = list(map(float, input('Please enter the resolutions of loop %d , seperated by space', j).split()))
+            j -= 1
+            my_mesh.add_inner_loop(points, np.array(segments), labels, np.array(resolutions), seeds = args.seeds)
+            
     my_mesh.meshing(max_area = args.max_area  ,conforming_delaunay= args.conforming_delaunay ,split_boundary = args.split_boundary)
     my_mesh.writing(file_name = name ,format=format,output_dir = dir, patch_type=args.patch_type)
-    
+   # points, segments, labels, resolutions, seeds
