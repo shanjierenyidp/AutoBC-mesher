@@ -704,21 +704,22 @@ def write_inlet_file(sum1, profile=None,output_dir = './',scale=1, file_name='in
 
 
 if __name__ == '__main__':
-    box = np.load(args.inputfile)[:,:2]
+    box = np.load(args.inputfile)
     (dir, fullname) = os.path.split(args.outputfile)
     dir += '/'
-    (name, format) = os.path.splittext(fullname)
+    (name, format) = os.path.splitext(fullname)
     my_mesh = mesher_2d(box, np.array(args.segment), args.label, np.array(args.resolution))
     if args.number_of_inner_loops != 0 :
         j = args.number_of_inner_loops
         while j:
-            points = list(map(int, input('Please enter the points of loop %d , seperated by space', j).split()))
-            segments = list(map(int, input('Please enter the segments of loop %d , seperated by space', j).split()))
-            labels = input('Please enter the labels of loop %d , seperated by space', j).split()
-            resolutions = list(map(float, input('Please enter the resolutions of loop %d , seperated by space', j).split()))
+            points = np.flip(np.load(input('Please enter the points of loop, seperated by space')), axis = 0)
+            segments = list(map(int, input('Please enter the segments of loop, seperated by space').split()))
+            labels = input('Please enter the labels of loop, seperated by space',).split()
+            resolutions = list(map(int, input('Please enter the resolutions of loop, seperated by space').split()))
             j -= 1
-            my_mesh.add_inner_loop(points, np.array(segments), labels, np.array(resolutions), seeds = args.seeds)
+            my_mesh.add_inner_loop(points, np.array(segments), labels, np.array(resolutions), seed = args.seeds)
             
     my_mesh.meshing(max_area = args.max_area  ,conforming_delaunay= args.conforming_delaunay ,split_boundary = args.split_boundary)
     my_mesh.writing(file_name = name ,format=format,output_dir = dir, patch_type=args.patch_type)
    # points, segments, labels, resolutions, seeds
+   
