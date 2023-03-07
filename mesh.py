@@ -722,7 +722,3 @@ if __name__ == '__main__':
     my_mesh.meshing(max_area = args.max_area  ,conforming_delaunay= args.conforming_delaunay ,split_boundary = args.split_boundary)
     my_mesh.writing(file_name = name ,format=format,output_dir = dir, patch_type=args.patch_type)
    # points, segments, labels, resolutions, seeds
-<<<<<<< HEAD
-   
-=======
->>>>>>> ebcba47f09d959457f17a04e6a673290cf91d8ad
