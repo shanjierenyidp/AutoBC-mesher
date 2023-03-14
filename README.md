@@ -3,6 +3,8 @@
 
 This mesher generate 2d unstructured mesh with boundary condition (BC) given geometry information and BC information.
 
+![airfoil](/Users/chengruisun/Documents/GitHub/AutoBC-mesher/airfoil.png)
+
 ## Get Started
 
 The installation of AutoBC-mesher is as easy as:
@@ -16,10 +18,6 @@ The installation of AutoBC-mesher is as easy as:
 To see all the arguments, go to terminal window and type:
 
 ` python mesh.py -h`
-
-And this returns: 
-
-` `
 
 and following is the detailed explaination
 
