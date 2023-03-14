@@ -1,9 +1,9 @@
 # AutoBC-mesher
-### Introduction
+## Introduction
 
 This mesher generate 2d unstructured mesh with boundary condition (BC) given geometry information and BC information.
 
-### Get Started
+## Get Started
 
 The installation of AutoBC-mesher is as easy as:
 
@@ -11,7 +11,7 @@ The installation of AutoBC-mesher is as easy as:
 
 
 
-### Tutorial
+## Tutorial
 
 To see all the arguments, go to terminal window and type:
 
@@ -23,7 +23,7 @@ And this returns:
 
 and following is the detailed explaination
 
-#### Input file `-ifile`
+### Input file `-ifile`
 
 To specify input file, type
 
@@ -35,7 +35,7 @@ For example, use
 
 **Note that the shape of the input geometry must be a n*2 matrix**
 
-#### Output file `-ofile`
+### Output file `-ofile`
 
 To specify output file, type
 
@@ -53,7 +53,7 @@ The format of the ouput can be chosen among:
 - .vtk: ` -ofile ./aorta.vtk`
 - .vtp: ` -ofile ./aorta.vtp  `
 
-#### Segments `-s`
+### Segments `-s`
 
 Argument segment represents the point index at which the boundary ends
 
@@ -61,7 +61,7 @@ For example, use
 
 `-s 1 10 109 118 `
 
-#### Resolution ` -r`
+### Resolution ` -r`
 
 By specifying resolution, the resolution of each boundary is defined
 
@@ -71,7 +71,7 @@ For example, use
 
 **Note the resolution must be an integer**
 
-#### Labels `-l`
+### Labels `-l`
 
 By specifying labels, the boundary label is determined
 
@@ -79,7 +79,7 @@ For example, use
 
 `-l  inlet upperWall outlet lowerWall`
 
-#### Max area `-ma`
+### Max area `-ma`
 
 The maximum area of the units in the mesh, the max area can be a float number
 
@@ -87,7 +87,7 @@ For example, use
 
 `-ma 4e-4`
 
-#### Number of inner loops `-nl`
+### Number of inner loops `-nl`
 
 This arguments specifies the number of inner loops in the geometry. The default value of this argument is 0
 
@@ -103,5 +103,5 @@ Please enter the segments of loop, seperated by space1`
 `
 Please enter the resolutions of loop, seperated by space200`
 
-#### Seed
+#### 
 
