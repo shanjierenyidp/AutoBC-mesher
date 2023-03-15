@@ -7,11 +7,23 @@ This mesher generate 2d unstructured mesh with boundary condition (BC) given geo
 
 ## Get Started
 
-The installation of AutoBC-mesher is as easy as:
+The installation of AutoBC-mesher is as easy.
 
+First, download the .zip file that contains mesh.py 
 
+Then Extract the file to the directory you like
 
+Nevigate into the directory, type ` pwd` 
 
+Do
+
+` export PATH=$PATH:/Path/to/the/output/of/pwd `	
+
+Then type 
+
+` mesh.py -h`
+
+to see if it works
 
 ## Tutorial
 
