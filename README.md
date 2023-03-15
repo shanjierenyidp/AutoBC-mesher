@@ -3,7 +3,12 @@
 
 This mesher generate 2d unstructured mesh with boundary condition (BC) given geometry information and BC information.
 
-![airfoil](/Users/chengruisun/Documents/GitHub/AutoBC-mesher/airfoil.png)
+</figure>
+<div class="hidden-bullet-wrapper" style="width: 500px">
+<figure class="code bullet-description2" style="margin-top: 10px;">
+  <img src="https://github.com/shanjierenyidp/AutoBC-mesher/blob/main/airfoil.png" width="500px"> 
+</figure>
+</div>
 
 ## Get Started
 
